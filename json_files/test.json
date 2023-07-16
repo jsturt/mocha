@@ -1,0 +1,7 @@
+{
+	"integrand": 	"(x^(4))*(_e^(-x))*((y))",
+	"variables": 	["x","y"],
+	"bounds": 		[[-3,10],[0,2]],
+	"samples": 		10000,
+	"method": 		"RANDOM"
+}
