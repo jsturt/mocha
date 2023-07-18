@@ -19,5 +19,5 @@
 #### Roadmap:
 - Write output to log.
 - Stopping conditions for minimum error, maximum calculation time.
-- New sampling methods : [Stratified, Hypercube, etc].
+- New sampling methods : [Stratified, antithetical, etc].
 - Queue multiple jobs.

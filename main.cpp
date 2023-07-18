@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 	// sample count check
 	if(argc!=2) 
 	{
-		std::cout<<"please provide JSON input.\n";
+		std::cout<<"please provide JSON input only.\n";
 		return -1;
 	}
 	
