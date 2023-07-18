@@ -4,6 +4,8 @@
 #include <array>
 #include <vector>
 #include <random>
+#include <iostream>
+#include <algorithm>
 #include "loadExpr.hpp"
 
 namespace mc{	
@@ -19,10 +21,12 @@ namespace mc{
 	class SampleGen{
 	public:
 		SampleGen(std::vector<std::array<double,2>> bounds); 
-		std::vector<double> sample(samplingMethod method);
+		std::vector<std::vector<double>> sample(unsigned int m, samplingMethod method);
 	private:
-		std::mt19937 m_Mt;
-		std::vector<std::uniform_real_distribution<>> m_Dists;
+		double m_scaleToBounds(double uniform_sample, std::array<double,2> bounds);
+		std::vector<std::array<double,2>> m_bounds;
+		std::mt19937 m_mt;
+		std::uniform_real_distribution<> m_dist;
 	};
 
 	double stddev(std::array<double,2>& data, unsigned int N, double vol);
