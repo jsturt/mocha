@@ -11,10 +11,12 @@
 - extensible, provide an easy interface for new features.
 
 #### Features:
+- Built with [`meson`](https://github.com/mesonbuild/meson).
 - Support for multiple sampling and variance-reduction techniques.
+    - Uniform Random Sampling.
+    - Latin Hypercube Sampling.
 - Loading of integrands, parameters, etc from JSON ([`nlohmann/json`](https://github.com/nlohmann/json)).
-- Fast parsing of integrand strings via [`muparser`](https://github.com/beltoforion/muparser)
-- 
+- Fast parsing of integrand strings via [`muparser`](https://github.com/beltoforion/muparser).
 
 #### Roadmap:
 - Write output to log.
