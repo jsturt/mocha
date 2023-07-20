@@ -2,6 +2,7 @@
 #include <fstream>
 #include <array>
 #include "montecarlo.hpp"
+#include "timer.hpp"
 #include "loadExpr.hpp"
 #include "json.hpp"
 
@@ -9,6 +10,8 @@ using json = nlohmann::json;
 
 int main(int argc, char** argv)
 {
+	// timing
+	ScopeTimer timer("Calculation finished in");
 	/* estimation
 {{{
 		for the integral
