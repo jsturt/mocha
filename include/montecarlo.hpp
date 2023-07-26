@@ -2,6 +2,7 @@
 #include <map>
 #include <cmath>
 #include <array>
+#include <chrono>
 #include <vector>
 #include <random>
 #include <iostream>

@@ -1,10 +1,7 @@
 #pragma once
-#include <iostream>
-#include <utility>
 #include <memory>
 #include <string>
 #include <vector>
-#include <array>
 #include "muParser.h"
 
 
