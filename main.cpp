@@ -50,8 +50,6 @@ int main(int argc, char** argv)
 	{
 		samples[i] = mc::estimate(expression , data["bounds"], data["samples"], mc::methodFromString[data["method"]])[0];
 	}
-	double mean = 0.0;
-	for(const auto& elem : samples) {mean += elem;}
 	SEM(samples,data["samples"]);
 	
 	return 0;
