@@ -1,9 +1,8 @@
 #include <iostream>
 #include <fstream>
-#include <array>
 #include "montecarlo.hpp"
-#include "timer.hpp"
 #include "loadExpr.hpp"
+#include "util.hpp"
 #include "json.hpp"
 
 using json = nlohmann::json;
@@ -30,15 +29,6 @@ int main(int argc, char** argv)
 						 N is large
 }}}
 	*/ 
-	/* standard deviation
-{{{
-		for our estimation we can calculate the standard deviation via
-										
-																[f(x)^2] - [f(x)]^2
-										σ_N = V * √---------------------
-																				 N
-}}}
-	*/ 
 
 	// sample count check
 	if(argc!=2) 
@@ -46,7 +36,7 @@ int main(int argc, char** argv)
 		std::cout<<"please provide JSON input only.\n";
 		return -1;
 	}
-	
+
 	// ::: read JSON input ::: //
 	std::ifstream f(argv[1]);
 	json data = json::parse(f);
@@ -55,10 +45,13 @@ int main(int argc, char** argv)
 	// ::: recover mathematical expression from string input ::: //
 	Expr expression(data["integrand"], data["variables"]);
 
-	// perform estimation of integral of function derived from string over domain `boundsList` with samples specified by CLI args
-	std::array<double,2> result = mc::estimate(expression , data["bounds"], data["samples"], mc::methodFromString[data["method"]]);
-	// report estimated value and standard deviation
-	std::cout<<"value: "<<result[0]<<" with std: "<<result[1]<<std::endl;
-
+	std::vector<double> samples(15);
+	for(int i=0;i<15;i++)
+	{
+		samples[i] = mc::estimate(expression , data["bounds"], data["samples"], mc::methodFromString[data["method"]])[0];
+	}
+	SEM(samples,data["samples"]);
+	
 	return 0;
 }
+

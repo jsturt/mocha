@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cmath>
 #include <chrono>
 #include <string>
+#include <vector>
 #include <iostream>
 
 class ScopeTimer{
@@ -32,3 +34,5 @@ private:
 	std::chrono::high_resolution_clock::time_point m_start;
 	std::chrono::high_resolution_clock::time_point m_end;
 };
+
+void SEM(std::vector<double> samples, unsigned int N);

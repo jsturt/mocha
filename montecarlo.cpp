@@ -2,7 +2,7 @@
 
 namespace mc{
 
-	SampleGen::SampleGen(std::vector<std::array<double,2>> bounds) : m_bounds(bounds) , m_mt(std::random_device()()) 
+	SampleGen::SampleGen(std::vector<std::array<double,2>> bounds) : m_bounds(bounds) , m_mt(std::chrono::system_clock::now().time_since_epoch().count()) 
 	{
  		m_dist = std::uniform_real_distribution<double>(0.0f,1.0f);
 	}
@@ -21,7 +21,6 @@ namespace mc{
 		switch(method){
 			case RANDOM:
 			{
-				std::cout<<"RANDOM BRANCH\n";
 				int n_dims = m_bounds.size();
 				std::vector<double> tmp(n_dims);
 				for(unsigned int j=0;j<m;j++)
@@ -36,47 +35,13 @@ namespace mc{
 			}
 			case HYPERCUBE:
 			{	
-				std::cout<<"HYPERCUBE BRANCH\n";
-				/* theory notes
-				{{{
-				requires a set of bins (m) to divide each axis (N) into.
-				LHS optimally returns all samples at once, better results are found for
-				1 set of m=1000 rather than 10 sets of m=100.
-
-				::: algorithm ::: //
-				generate indices 
-				shuffle along N-1 axes
-				sample inside each strata
-				record result and return
-
-				--- generate hyperplane & shuffle
-				{{{
-				for 2D:
-				■ 1 2 3 4 5      ■ 1 2 3 4 5
-				1 x              1   x       
-				2   x        =>  2         x   
-				3     x          3     x     
-				4       x    =>  4 x         
-				5         x      5       x      
-				aka (1,1,...,1), (2,2,...,2), ..., (m-1,m-1,...,m-1) where each vector has N entries.
-				}}}
-				--- compute binning 
-				{{{
-				for each dimension sample selected strata 
-				- take sample in [index/m,index/m + 1/m)
-					aka take real dist on [0,1), div output by m, add index/m
-				}}}
-				}}}
-				*/
-
 				// compute number of dimensions
 				int n_dims = m_bounds.size();
 				// preallocate vectors to save time over push_back's
 				std::vector<std::vector<int>> dimensions(n_dims);
 				std::vector<int> index_list(m);
 				// initialise rng objects for shuffling
-				std::random_device rd;
-				std::mt19937 mt(rd());			
+				std::mt19937 mt(std::chrono::system_clock::now().time_since_epoch().count());			
 				// create "diagonal" hyperplane
 				for(unsigned int j=0;j<m;j++)
 				{
@@ -118,6 +83,18 @@ namespace mc{
 		return vol*tmp;
 	}
 
+	double new_stddev(std::vector<double> values)
+	{
+		unsigned int N = values.size();
+		double V =0;
+		double mu=0;
+		for(const auto& val : values) {mu += val;}
+		mu /= (N);
+		for(const auto& val : values) {V += pow(val - mu, 2.0);}
+		V /= (N-1);
+		return sqrt(V);
+	}
+
 	double volume(std::vector<std::array<double,2>> bounds)
 	{
 		double vol = 1.0;
@@ -136,24 +113,23 @@ namespace mc{
 		double vol = volume(bounds);
 		// init sampling class
 		SampleGen sam(bounds);
+
+		// new std dev calc
+		std::vector<double> results;
 	
 		std::vector<std::vector<double>> xvals = sam.sample(samples, method);
 		// take and record samples
 		for(const auto& x : xvals)
 		{
-			//for(const auto& val : x)
-			//{
-			//	std::cout<<val<<" ";
-			//}
-			//std::cout<<std::endl;
 			double tmp = integrand.evaluate(x);
+			results.push_back(tmp);
 			values[0] += tmp;
 			values[1] += pow(tmp,2);
 		}
 	
 		// manipulate and pack results
 		values[0] = vol * values[0] / ((double) samples);
-		values[1] = stddev(values, samples, vol);
+		values[1] = new_stddev(results);
 	
 		return values;
 	}
