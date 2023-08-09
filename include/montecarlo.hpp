@@ -5,6 +5,7 @@
 #include <chrono>
 #include <vector>
 #include <random>
+#include <memory>
 #include <iostream>
 #include <algorithm>
 #include "loadExpr.hpp"
@@ -30,7 +31,7 @@ namespace mc{
 		std::uniform_real_distribution<> m_dist;
 	};
 
-	double stddev(std::array<double,2>& data, unsigned int N, double vol);
+	double stddev(std::vector<double> values);
 	double volume(std::vector<std::array<double,2>> bounds);
-	std::array<double,2> estimate(Expr integrand, std::vector<std::array<double,2>> bounds , unsigned int samples, samplingMethod method);
+	std::array<double,2> estimate(std::shared_ptr<Expr> integrand, std::vector<std::array<double,2>> bounds , unsigned int samples, samplingMethod method);
 };

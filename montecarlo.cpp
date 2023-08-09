@@ -77,13 +77,7 @@ namespace mc{
 		return samples;
 	}
 
-	double stddev(std::array<double,2>& data, unsigned int N, double vol)
-	{
-		double tmp = sqrt( ( (data[1] / N) - (pow(data[0],2)/N) ) / N);
-		return vol*tmp;
-	}
-
-	double new_stddev(std::vector<double> values)
+	double stddev(std::vector<double> values)
 	{
 		unsigned int N = values.size();
 		double V =0;
@@ -105,7 +99,7 @@ namespace mc{
 		return vol;
 	}
 	
-	std::array<double,2> estimate(Expr integrand, std::vector<std::array<double,2>> bounds, unsigned int samples, samplingMethod method)
+	std::array<double,2> estimate(std::shared_ptr<Expr> integrand, std::vector<std::array<double,2>> bounds, unsigned int samples, samplingMethod method)
 	{
 		// return value array
 		std::array<double,2> values = {0.0,0.0};
@@ -121,7 +115,7 @@ namespace mc{
 		// take and record samples
 		for(const auto& x : xvals)
 		{
-			double tmp = integrand.evaluate(x);
+			double tmp = integrand->evaluate(x);
 			results.push_back(tmp);
 			values[0] += tmp;
 			values[1] += pow(tmp,2);
@@ -129,7 +123,7 @@ namespace mc{
 	
 		// manipulate and pack results
 		values[0] = vol * values[0] / ((double) samples);
-		values[1] = new_stddev(results);
+		values[1] = stddev(results);
 	
 		return values;
 	}
