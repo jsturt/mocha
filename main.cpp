@@ -43,7 +43,8 @@ int main(int argc, char** argv)
 	f.close();
 
 	// ::: recover mathematical expression from string input ::: //
-	Expr expression(data["integrand"], data["variables"]);
+	std::shared_ptr<ExprJSON> expression = std::make_shared<ExprJSON>(data["integrand"], data["variables"]);
+	//std::shared_ptr<ExprMOCK> expression = std::make_shared<ExprMOCK>();
 
 	std::vector<double> samples(15);
 	for(int i=0;i<15;i++)
