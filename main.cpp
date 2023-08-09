@@ -45,11 +45,12 @@ int main(int argc, char** argv)
 	// ::: recover mathematical expression from string input ::: //
 	std::shared_ptr<ExprJSON> expression = std::make_shared<ExprJSON>(data["integrand"], data["variables"]);
 	//std::shared_ptr<ExprMOCK> expression = std::make_shared<ExprMOCK>();
-
+	
+	mc::Estimator estimator(expression, data["bounds"], mc::methodFromString[data["method"]]);
 	std::vector<double> samples(15);
 	for(int i=0;i<15;i++)
 	{
-		samples[i] = mc::estimate(expression , data["bounds"], data["samples"], mc::methodFromString[data["method"]])[0];
+		samples[i] = estimator.estimate(data["samples"]);
 	}
 	SEM(samples,data["samples"]);
 	

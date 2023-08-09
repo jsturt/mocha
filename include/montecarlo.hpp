@@ -14,24 +14,52 @@ namespace mc{
 	
 	enum samplingMethod{
 		RANDOM,
-		HYPERCUBE,
-		STRATIFIED
+		HYPERCUBE
 	};
 
-	inline std::map<std::string, samplingMethod> methodFromString = {{"RANDOM", RANDOM}, {"HYPERCUBE", HYPERCUBE}, {"STRATIFIED", STRATIFIED}};
+	inline std::map<std::string, samplingMethod> methodFromString = {{"RANDOM", RANDOM}, {"HYPERCUBE", HYPERCUBE}};
 
-	class SampleGen{
+	class Sampling{
+	// interface for sampling methods
 	public:
-		SampleGen(std::vector<std::array<double,2>> bounds); 
-		std::vector<std::vector<double>> sample(unsigned int m, samplingMethod method);
-	private:
-		double m_scaleToBounds(double uniform_sample, std::array<double,2> bounds);
+		virtual ~Sampling() = 0;
+		virtual std::vector<std::vector<double>> sample(unsigned int m) = 0;
+	protected:
 		std::vector<std::array<double,2>> m_bounds;
 		std::mt19937 m_mt;
 		std::uniform_real_distribution<> m_dist;
 	};
 
+	class RandomSampling : public Sampling{
+	public:
+		RandomSampling(std::vector<std::array<double,2>> bounds);
+		~RandomSampling() {}
+		std::vector<std::vector<double>> sample(unsigned int m);
+	};
+
+	class LHSSampling : public Sampling{
+	public: 
+		LHSSampling(std::vector<std::array<double,2>> bounds);
+		~LHSSampling() {};
+		std::vector<std::vector<double>> sample(unsigned int m);
+	};
+
+	class SamplingFactory{
+	public:
+		std::shared_ptr<Sampling> build(samplingMethod method, std::vector<std::array<double,2>> bounds);
+	};
+
+	class Estimator{
+	public:
+		Estimator(std::shared_ptr<Expr> integrand, std::vector<std::array<double,2>> bounds, samplingMethod method);
+		double estimate(unsigned int samples);
+	private:
+		std::shared_ptr<Expr> m_integrand;
+		std::shared_ptr<Sampling> m_sampler;		
+		double m_volume;
+	};
+
 	double stddev(std::vector<double> values);
 	double volume(std::vector<std::array<double,2>> bounds);
-	std::array<double,2> estimate(std::shared_ptr<Expr> integrand, std::vector<std::array<double,2>> bounds , unsigned int samples, samplingMethod method);
+	double scaleToBounds(double uniform_sample, std::array<double,2> bounds);
 };
